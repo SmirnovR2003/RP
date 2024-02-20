@@ -6,17 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
 
 namespace Valuator.Pages;
 public class SummaryModel : PageModel
 {
-    private IDistributedCache _cache;
     private readonly ILogger<SummaryModel> _logger;
 
-    public SummaryModel(ILogger<SummaryModel> logger, IDistributedCache cache)
+    public SummaryModel(ILogger<SummaryModel> logger)
     {
         _logger = logger;
-        _cache = cache;
     }
 
     public double Rank { get; set; }
@@ -24,14 +23,20 @@ public class SummaryModel : PageModel
 
     public void OnGet(string id)
     {
+        //сделать через ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
         _logger.LogDebug(id);
+
+        var connection = ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
+
+        var db = connection.GetDatabase();
+
 
         string similarityKey = "SIMILARITY-" + id;
 
-        Similarity = double.Parse(_cache.GetString(similarityKey));
+        Similarity = double.Parse(db.StringGet(similarityKey));
 
         string rankKey = "RANK-" + id;
-        Rank = double.Parse(_cache.GetString(rankKey));
+        Rank = double.Parse(db.StringGet(rankKey));
 
         //TODO: проинициализировать свойства Rank и Similarity значениями из БД
     }

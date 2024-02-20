@@ -2,6 +2,7 @@ namespace Valuator;
 
 public class Program
 {
+    readonly DB _db = new("localhost:6379");
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,6 @@ public class Program
         builder.Services.AddStackExchangeRedisCache(options => {
             options.Configuration = "localhost";
             options.InstanceName = "local";
-           
         });
 
         var app = builder.Build();
