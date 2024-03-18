@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Caching.Distributed;
+using NATS.Client;
+using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Text;
 using System.Text.Json;
 
 namespace Valuator.Pages;
@@ -10,9 +13,24 @@ public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
 
+    private readonly ConnectionMultiplexer _redis;
+    private readonly IConnection _natsConnection;
+
     public IndexModel(ILogger<IndexModel> logger)
     {
         _logger = logger;
+        _redis = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+        try
+        {
+            Options options = ConnectionFactory.GetDefaultOptions();
+            options.Url = "127.0.0.1:4222";
+            _natsConnection = new ConnectionFactory().CreateConnection(options);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Ошибка при подключении к NATS: {ex.Message}");
+            throw;
+        }
     }
 
     public void OnGet()
@@ -28,22 +46,22 @@ public class IndexModel : PageModel
 
         string id = Guid.NewGuid().ToString();
 
+
+        
+
+
+        var messageObject = new
+        {
+            Text = text,
+            Id = id
+        };
+        // Отправка текста в NATS
+        string textMessage = JsonConvert.SerializeObject(messageObject);
+        byte[] messageBytes = Encoding.UTF8.GetBytes(textMessage);
+        _natsConnection.Publish("text.processing", messageBytes);
+
         var connection = ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
         var db = connection.GetDatabase();
-
-
-        string rankKey = "RANK-" + id;
-        double notAlphabetSymbolsCount = 0;
-
-        foreach (var symbol in text)
-        {
-            if (!Char.IsLetter(symbol) ) ++notAlphabetSymbolsCount;
-        }
-
-        double rank = (text.Length - notAlphabetSymbolsCount) / text.Length;
-
-        db.StringSetAsync(rankKey, rank.ToString());
-
 
 
         string similarityKey = "SIMILARITY-" + id;

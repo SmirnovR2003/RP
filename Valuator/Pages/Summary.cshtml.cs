@@ -23,7 +23,6 @@ public class SummaryModel : PageModel
 
     public void OnGet(string id)
     {
-        //сделать через ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
         _logger.LogDebug(id);
 
         var connection = ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
