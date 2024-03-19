@@ -8,7 +8,6 @@ namespace RankCalculator
 
     public class MessageModel
     {
-        public string Text { get; set; }
         public string Id { get; set; }
     }
 
@@ -25,13 +24,17 @@ namespace RankCalculator
 
                 var messageObject = JsonConvert.DeserializeObject<MessageModel>(Encoding.UTF8.GetString(messageBytes));
 
-                string text = messageObject.Text;
-                string id = messageObject.Id;
 
+                string id = messageObject.Id;
+                string text = db.StringGet("TEXT-"+messageObject.Id);
+                Console.WriteLine($"получил id {id}");
+
+
+                Console.WriteLine($"получил текст {text}");
                 double rank = Calculate(text);
 
                 string rankKey = "RANK-" + id;
-                db.StringSet(rankKey, rank.ToString());
+                db.StringSetAsync(rankKey, rank.ToString());
                 Console.WriteLine($"запись ранга для текста с id {rankKey}");
             });
 

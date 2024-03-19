@@ -47,12 +47,17 @@ public class IndexModel : PageModel
         string id = Guid.NewGuid().ToString();
 
 
-        
+
+        var connection = ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
+        var db = connection.GetDatabase();
+
+        string textKey = "TEXT-" + id;
+        db.StringSetAsync(textKey, text);
+
 
 
         var messageObject = new
         {
-            Text = text,
             Id = id
         };
         // Отправка текста в NATS
@@ -60,28 +65,27 @@ public class IndexModel : PageModel
         byte[] messageBytes = Encoding.UTF8.GetBytes(textMessage);
         _natsConnection.Publish("text.processing", messageBytes);
 
-        var connection = ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
-        var db = connection.GetDatabase();
-
 
         string similarityKey = "SIMILARITY-" + id;
         double similarity = 0;
+        int count = 0;
 
         foreach (string? key in connection.GetServer("localhost:6379").Keys(pattern: "*TEXT-*"))
         {
             string? tesxtByDB = db.StringGet(key);
             if(text.Equals(tesxtByDB))
             {
-                similarity = 1;
-                break;
+                count++;
             }
-            
         }
+
+        similarity = count == 1 ? 0 : 1; 
+
         db.StringSetAsync(similarityKey, similarity.ToString());
 
 
-        string textKey = "TEXT-" + id;
-        db.StringSetAsync(textKey, text);
+
+        Thread.Sleep(1000);
 
         return Redirect($"summary?id={id}");
     }
