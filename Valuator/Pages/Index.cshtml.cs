@@ -47,19 +47,18 @@ public class IndexModel : PageModel
         string id = Guid.NewGuid().ToString();
 
 
-
         var connection = ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
         var db = connection.GetDatabase();
 
         string textKey = "TEXT-" + id;
-        db.StringSetAsync(textKey, text);
-
+        bool wait = db.StringSetAsync(textKey, text).Result;
 
 
         var messageObject = new
         {
             Id = id
         };
+
         // Отправка текста в NATS
         string textMessage = JsonConvert.SerializeObject(messageObject);
         byte[] messageBytes = Encoding.UTF8.GetBytes(textMessage);
@@ -81,9 +80,9 @@ public class IndexModel : PageModel
 
         similarity = count == 1 ? 0 : 1; 
 
-        db.StringSetAsync(similarityKey, similarity.ToString());
+        wait = db.StringSetAsync(similarityKey, similarity.ToString()).Result;
 
-
+        _natsConnection.Publish("SimilarityCalculated", messageBytes);
 
         Thread.Sleep(1000);
 

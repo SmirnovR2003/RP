@@ -15,9 +15,9 @@ C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalculator.AssemblyInfoInputs.ca
 C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalculator.AssemblyInfo.cs
 C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalculator.csproj.CoreCompileInputs.cache
 C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalculator.sourcelink.json
-C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalculator.csproj.CopyComplete
 C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalculator.dll
 C:\roman\RP\RankCalculator\obj\Debug\net8.0\refint\RankCalculator.dll
 C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalculator.pdb
 C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalculator.genruntimeconfig.cache
 C:\roman\RP\RankCalculator\obj\Debug\net8.0\ref\RankCalculator.dll
+C:\roman\RP\RankCalculator\obj\Debug\net8.0\RankCalc.FD50DE83.Up2Date

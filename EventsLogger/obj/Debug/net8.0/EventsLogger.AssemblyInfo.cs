@@ -11,12 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("RankCalculator")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("EventsLogger")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f84160bedf86c5328e1e1c2abf74665613d54ecf")]
-[assembly: System.Reflection.AssemblyProductAttribute("RankCalculator")]
-[assembly: System.Reflection.AssemblyTitleAttribute("RankCalculator")]
+[assembly: System.Reflection.AssemblyProductAttribute("EventsLogger")]
+[assembly: System.Reflection.AssemblyTitleAttribute("EventsLogger")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // Создано классом WriteCodeFragment MSBuild.

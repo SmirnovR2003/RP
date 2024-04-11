@@ -37,6 +37,5 @@ public class SummaryModel : PageModel
         string rankKey = "RANK-" + id;
         Rank = double.Parse(db.StringGet(rankKey));
 
-        //TODO: проинициализировать свойства Rank и Similarity значениями из БД
     }
 }

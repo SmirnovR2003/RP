@@ -36,6 +36,9 @@ namespace RankCalculator
                 string rankKey = "RANK-" + id;
                 db.StringSetAsync(rankKey, rank.ToString());
                 Console.WriteLine($"запись ранга для текста с id {rankKey}");
+
+                natsConnection.Publish("RankCalculated", messageBytes);
+
             });
 
             // Ожидание сообщений
