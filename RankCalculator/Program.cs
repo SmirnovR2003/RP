@@ -31,7 +31,7 @@ namespace RankCalculator
 
 
                 Console.WriteLine($"получил текст {text}");
-                double rank = Calculate(text);
+                double rank = 1.0-Calculate(text);
 
                 string rankKey = "RANK-" + id;
                 db.StringSetAsync(rankKey, rank.ToString());

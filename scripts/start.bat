@@ -14,8 +14,8 @@ cd ../RankCalculator
 start "" dotnet run
 
 cd ../EventsLogger
-start "" dotnet run --urls "http://127.0.0.1:5003"
-start "" dotnet run --urls "http://127.0.0.1:5004"
+start "" dotnet run
+start "" dotnet run
 
 echo Starting Nginx proxy server...
 
