@@ -82,6 +82,15 @@ public class IndexModel : PageModel
 
         wait = db.StringSetAsync(similarityKey, similarity.ToString()).Result;
 
+        var similarityMessageObject = new
+        {
+            Id = id,
+            Similarity = similarity
+        };
+
+        // Отправка текста в NATS
+        textMessage = JsonConvert.SerializeObject(similarityMessageObject);
+        messageBytes = Encoding.UTF8.GetBytes(textMessage);
         _natsConnection.Publish("SimilarityCalculated", messageBytes);
 
         Thread.Sleep(1000);

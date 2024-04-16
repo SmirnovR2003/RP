@@ -37,6 +37,17 @@ namespace RankCalculator
                 db.StringSetAsync(rankKey, rank.ToString());
                 Console.WriteLine($"запись ранга для текста с id {rankKey}");
 
+
+
+                var rankMessageObject = new
+                {
+                    Id = id,
+                    Rank = rank
+                };
+
+                // Отправка текста в NATS
+                string textMessage = JsonConvert.SerializeObject(rankMessageObject);
+                messageBytes = Encoding.UTF8.GetBytes(textMessage);
                 natsConnection.Publish("RankCalculated", messageBytes);
 
             });

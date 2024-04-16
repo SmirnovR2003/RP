@@ -6,14 +6,19 @@ using Newtonsoft.Json;
 namespace EventsLogger
 {
 
-    public class MessageModel
+    public class RankCalculatedMessageModel
     {
         public string Id { get; set; }
+        public string Rank { get; set; }
+    }
+    public class SimilarityCalculatedMessageModel
+    {
+        public string Id { get; set; }
+        public string Similarity { get; set; }
     }
 
     class EventsLogger
     {
-        private static readonly IDatabase db = ConnectionMultiplexer.Connect("127.0.0.1:6379").GetDatabase();
         private static readonly IConnection natsConnection = new ConnectionFactory().CreateConnection("127.0.0.1:4222");
 
         static void Main(string[] args)
@@ -22,10 +27,10 @@ namespace EventsLogger
             {
                 var messageBytes = args.Message.Data;
 
-                var messageObject = JsonConvert.DeserializeObject<MessageModel>(Encoding.UTF8.GetString(messageBytes));
+                var messageObject = JsonConvert.DeserializeObject<RankCalculatedMessageModel>(Encoding.UTF8.GetString(messageBytes));
 
                 string id = messageObject.Id;
-                string rank = db.StringGet("RANK-" + messageObject.Id);
+                string rank = messageObject.Rank;
                 
                 Console.WriteLine($"RankCalculated");
                 Console.WriteLine($"{id}");
@@ -37,10 +42,10 @@ namespace EventsLogger
             {
                 var messageBytes = args.Message.Data;
 
-                var messageObject = JsonConvert.DeserializeObject<MessageModel>(Encoding.UTF8.GetString(messageBytes));
+                var messageObject = JsonConvert.DeserializeObject<SimilarityCalculatedMessageModel>(Encoding.UTF8.GetString(messageBytes));
 
                 string id = messageObject.Id;
-                string similarity = db.StringGet("SIMILARITY-" + messageObject.Id);
+                string similarity = messageObject.Similarity;
 
                 Console.WriteLine($"SimilarityCalculated");
                 Console.WriteLine($"{id}");

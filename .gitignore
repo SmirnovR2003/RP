@@ -4,3 +4,6 @@ nginx/docs
 nginx/html
 nginx/logs
 nginx/temp
+
+**/bin
+**/obj
