@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Valuator", "Valuator.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RankCalculator", "..\RankCalculator\RankCalculator.csproj", "{6F397381-17D2-4777-AB44-5436BDAE0E05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsLogger", "..\EventsLogger\EventsLogger.csproj", "{09CDF20D-6629-4F37-8EE1-F0E498D72AD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventsLogger", "..\EventsLogger\EventsLogger.csproj", "{09CDF20D-6629-4F37-8EE1-F0E498D72AD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

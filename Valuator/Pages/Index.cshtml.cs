@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using NATS.Client;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -13,24 +14,16 @@ public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
 
-    private readonly ConnectionMultiplexer _redis;
     private readonly IConnection _natsConnection;
+    private readonly IDB _db;
+    private IConfiguration _configuration;
 
-    public IndexModel(ILogger<IndexModel> logger)
+    public IndexModel(ILogger<IndexModel> logger, IConfiguration configuration)
     {
         _logger = logger;
-        _redis = ConnectionMultiplexer.Connect("127.0.0.1:6379");
-        try
-        {
-            Options options = ConnectionFactory.GetDefaultOptions();
-            options.Url = "127.0.0.1:4222";
-            _natsConnection = new ConnectionFactory().CreateConnection(options);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Ошибка при подключении к NATS: {ex.Message}");
-            throw;
-        }
+        _configuration = configuration;
+        _db = new DB(configuration);
+        _natsConnection = new ConnectionFactory().CreateConnection("127.0.0.1:4222");
     }
 
     public void OnGet()
@@ -38,7 +31,7 @@ public class IndexModel : PageModel
 
     }
 
-    public IActionResult OnPost(string text)
+    public IActionResult OnPost(string text, string country)
     {
 
         if (text == "") return Redirect($"/");
@@ -46,41 +39,32 @@ public class IndexModel : PageModel
 
         string id = Guid.NewGuid().ToString();
 
-
-        var connection = ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
-        var db = connection.GetDatabase();
-
-        string textKey = "TEXT-" + id;
-        bool wait = db.StringSetAsync(textKey, text).Result;
-
+        _db.StoreText(id, text, country);
 
         var messageObject = new
         {
-            Id = id
-        };
+            Id = id,
+            HostAndPort = _configuration.GetConnectionString(RegionTypes.COUNTRY_TO_REGION[country]),
+            Region = RegionTypes.COUNTRY_TO_REGION[country]
+        }; 
 
         // Отправка текста в NATS
         string textMessage = JsonConvert.SerializeObject(messageObject);
         byte[] messageBytes = Encoding.UTF8.GetBytes(textMessage);
         _natsConnection.Publish("text.processing", messageBytes);
 
-
-        string similarityKey = "SIMILARITY-" + id;
-        double similarity = 0;
         int count = 0;
-
-        foreach (string? key in connection.GetServer("localhost:6379").Keys(pattern: "*TEXT-*"))
+        foreach (string? tesxtByDB in _db.GetAllTexts())
         {
-            string? tesxtByDB = db.StringGet(key);
             if(text.Equals(tesxtByDB))
             {
                 count++;
             }
         }
 
-        similarity = count == 1 ? 0 : 1; 
+        double similarity = count == 1 ? 0 : 1; 
 
-        wait = db.StringSetAsync(similarityKey, similarity.ToString()).Result;
+        _db.StoreSimilarity(id, similarity.ToString());
 
         var similarityMessageObject = new
         {

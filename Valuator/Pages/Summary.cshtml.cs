@@ -12,9 +12,12 @@ namespace Valuator.Pages;
 public class SummaryModel : PageModel
 {
     private readonly ILogger<SummaryModel> _logger;
+    private readonly IDB _db;
+    private IConfiguration _configuration;
 
-    public SummaryModel(ILogger<SummaryModel> logger)
+    public SummaryModel(ILogger<SummaryModel> logger, IConfiguration configuration)
     {
+        _db = new DB(configuration);
         _logger = logger;
     }
 
@@ -25,17 +28,8 @@ public class SummaryModel : PageModel
     {
         _logger.LogDebug(id);
 
-        var connection = ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true");
-
-        var db = connection.GetDatabase();
-
-
-        string similarityKey = "SIMILARITY-" + id;
-
-        Similarity = double.Parse(db.StringGet(similarityKey));
-
-        string rankKey = "RANK-" + id;
-        Rank = double.Parse(db.StringGet(rankKey));
+        Similarity = double.Parse(_db.GetSimilarity(id));
+        Rank = double.Parse(_db.GetRank(id));
 
     }
 }

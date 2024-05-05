@@ -2,6 +2,8 @@
 using StackExchange.Redis;
 using System.Text;
 using Newtonsoft.Json;
+using System;
+
 
 namespace RankCalculator
 {
@@ -9,35 +11,34 @@ namespace RankCalculator
     public class MessageModel
     {
         public string Id { get; set; }
+        public string HostAndPort { get; set; }
+        public string Region { get; set; }
     }
 
     class RankCalculator
     {
-        private static readonly IDatabase db = ConnectionMultiplexer.Connect("127.0.0.1:6379").GetDatabase();
-        private static readonly IConnection natsConnection = new ConnectionFactory().CreateConnection("127.0.0.1:4222");
+        private static IConnection _natsConnection = new ConnectionFactory().CreateConnection("127.0.0.1:4222");
 
         static void Main(string[] args)
         {
-            natsConnection.SubscribeAsync("text.processing", (sender, args) =>
+            _natsConnection.SubscribeAsync("text.processing", (sender, args) =>
             {
                 var messageBytes = args.Message.Data;
 
                 var messageObject = JsonConvert.DeserializeObject<MessageModel>(Encoding.UTF8.GetString(messageBytes));
 
-
                 string id = messageObject.Id;
-                string text = db.StringGet("TEXT-"+messageObject.Id);
-                Console.WriteLine($"получил id {id}");
 
+                string hostAndPort = messageObject.HostAndPort;
+                IDatabase db = ConnectionMultiplexer.Connect(hostAndPort).GetDatabase();
 
-                Console.WriteLine($"получил текст {text}");
-                double rank = 1.0-Calculate(text);
+                string text = db.StringGet("TEXT-" + messageObject.Id);
+                Console.WriteLine($"LOOKUP: {id}, {messageObject.Region}, GetText");
 
-                string rankKey = "RANK-" + id;
-                db.StringSetAsync(rankKey, rank.ToString());
-                Console.WriteLine($"запись ранга для текста с id {rankKey}");
+                double rank = 1.0 - Calculate(text);
 
-
+                db.StringSetAsync("RANK-" + id, rank.ToString());
+                Console.WriteLine($"LOOKUP: {id}, {messageObject.Region}, SoreRank");
 
                 var rankMessageObject = new
                 {
@@ -48,7 +49,7 @@ namespace RankCalculator
                 // Отправка текста в NATS
                 string textMessage = JsonConvert.SerializeObject(rankMessageObject);
                 messageBytes = Encoding.UTF8.GetBytes(textMessage);
-                natsConnection.Publish("RankCalculated", messageBytes);
+                _natsConnection.Publish("RankCalculated", messageBytes);
 
             });
 
