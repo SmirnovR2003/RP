@@ -11,6 +11,12 @@ class Program
     {
         try
         {
+            if(message == "")
+            {
+                Console.WriteLine("message must not be empty");
+                return;
+            }
+            if (host == "localhost") host = "127.0.0.1";
             // Разрешение сетевых имён
             IPAddress ipAddress = IPAddress.Parse(host);
             //IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());

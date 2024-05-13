@@ -41,18 +41,14 @@ class Program
 
                 Console.WriteLine("Получение данных...");
                 byte[] buf = new byte[1024];
-                //byte[] buf = new byte[ulong.MaxValue];
                 string data = null;
-                while (true)
+                int remainingBytes = 1024;
+                while (remainingBytes>0)
                 {
                     // RECEIVE
                     int bytesRec = handler.Receive(buf);
-
-                    data += Encoding.UTF8.GetString(buf, 0, bytesRec) ;
-                    if (data.IndexOf("<EOF>") > -1 || bytesRec <= 0)
-                    {
-                        break;
-                    }
+                    remainingBytes = handler.Available;
+                    data += Encoding.UTF8.GetString(buf, 0, bytesRec);
                 }
                 messages.Add(data);
                 Console.WriteLine("Полученный текст: {0}", data);

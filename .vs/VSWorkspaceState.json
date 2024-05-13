@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Chat\\Client",
+    "\\Chat\\Server"
   ],
-  "SelectedNode": "\\Valuator.sln",
+  "SelectedNode": "\\Chat",
   "PreviewInSolutionExplorer": false
 }
