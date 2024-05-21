@@ -1,0 +1,15 @@
+C:\roman\RP\Chain\bin\Debug\net8.0\Chain.exe
+C:\roman\RP\Chain\bin\Debug\net8.0\Chain.deps.json
+C:\roman\RP\Chain\bin\Debug\net8.0\Chain.runtimeconfig.json
+C:\roman\RP\Chain\bin\Debug\net8.0\Chain.dll
+C:\roman\RP\Chain\bin\Debug\net8.0\Chain.pdb
+C:\roman\RP\Chain\obj\Debug\net8.0\Chain.GeneratedMSBuildEditorConfig.editorconfig
+C:\roman\RP\Chain\obj\Debug\net8.0\Chain.AssemblyInfoInputs.cache
+C:\roman\RP\Chain\obj\Debug\net8.0\Chain.AssemblyInfo.cs
+C:\roman\RP\Chain\obj\Debug\net8.0\Chain.csproj.CoreCompileInputs.cache
+C:\roman\RP\Chain\obj\Debug\net8.0\Chain.sourcelink.json
+C:\roman\RP\Chain\obj\Debug\net8.0\Chain.dll
+C:\roman\RP\Chain\obj\Debug\net8.0\refint\Chain.dll
+C:\roman\RP\Chain\obj\Debug\net8.0\Chain.pdb
+C:\roman\RP\Chain\obj\Debug\net8.0\Chain.genruntimeconfig.cache
+C:\roman\RP\Chain\obj\Debug\net8.0\ref\Chain.dll
